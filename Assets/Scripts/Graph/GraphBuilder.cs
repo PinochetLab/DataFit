@@ -22,6 +22,8 @@ public class GraphBuilder : MonoBehaviour
 
     private const int cellCount = 10;
 
+    private static float percent = 0;
+
     private List<Vector3> _targetPoints;
     private List<Vector3> _currentPoints;
 
@@ -39,7 +41,7 @@ public class GraphBuilder : MonoBehaviour
 
     private void Update()
     {
-        const float noise = 0.02f;
+        var noise = 0.02f * (1 - percent / 105);
         _lineRenderer.SetPositions(_currentPoints
             .Select(v => v + Vector3.up * (Random.Range(-noise, noise))).ToArray());
     }
@@ -81,7 +83,9 @@ public class GraphBuilder : MonoBehaviour
         _currentPoints = points;
         _lineRenderer.positionCount = points.Count;
         _lineRenderer.SetPositions(points.ToArray());
-        return new Similarity(mse);
+        var s = new Similarity(mse);
+        percent = s.Percent;
+        return s;
     }
 
     private static float ClosestPowerOfTwo(float x)

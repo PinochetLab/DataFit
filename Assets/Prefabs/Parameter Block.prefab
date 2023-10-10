@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 4.799988, y: 0}
   m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &2423622293014248451
@@ -822,8 +822,8 @@ RectTransform:
   m_GameObject: {fileID: 4231250224557669010}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.6, y: 1.6, z: 1.6}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.9, y: 1.2, z: 1.6}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4960682935486046798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -853,14 +853,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
+  m_Color: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a2b381492f38c44538f7a420a0322a92, type: 3}
+  m_Sprite: {fileID: 21300000, guid: de102304e1c9d4c3a887d73ccb8a3007, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1285,7 +1285,6 @@ MonoBehaviour:
   indicatorImage: {fileID: 7705556853580093968}
   indicatorDisabledSprite: {fileID: 21300000, guid: 4f5332a5531404163a3f3f9b511af2d9, type: 3}
   indicatorEnabledSprite: {fileID: 21300000, guid: c5d6e80ab92a74f8a9618a439a0a603a, type: 3}
-  sliderHandle: {fileID: 4987700000481520323}
 --- !u!114 &2598444510107461215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1627,7 +1626,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2472558397017109012}
   m_TextViewport: {fileID: 7777022567903431960}
   m_TextComponent: {fileID: 6257888652355752301}
@@ -1636,14 +1635,14 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 3
+  m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 3
+  m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 30
   m_CharacterLimit: 0
@@ -1712,7 +1711,6 @@ GameObject:
   - component: {fileID: 8488439826239928742}
   - component: {fileID: 8491195916883132284}
   - component: {fileID: 3041693285930360068}
-  - component: {fileID: 5532969136849548263}
   - component: {fileID: 7722828121750402782}
   m_Layer: 5
   m_Name: Parameter Block
@@ -1784,29 +1782,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2.09
---- !u!114 &5532969136849548263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6804652984707910471}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53d7d6eb7a42945f797338f76031310a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parameterNameText: {fileID: 7495617433988710756}
-  parameterSlider: {fileID: 6384767920675453025}
-  inputField: {fileID: 577969873333690124}
-  minValueText: {fileID: 5966339638226658022}
-  maxValueText: {fileID: 5913103593765717637}
-  disabledGO: {fileID: 0}
-  enabledGO: {fileID: 0}
-  indicatorImage: {fileID: 0}
-  indicatorDisabledSprite: {fileID: 0}
-  indicatorEnabledSprite: {fileID: 0}
-  sliderHandle: {fileID: 0}
 --- !u!114 &7722828121750402782
 MonoBehaviour:
   m_ObjectHideFlags: 0

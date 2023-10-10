@@ -37,7 +37,6 @@ public class Level
         Expression = expression;
         ParameterValues = parameterValues;
         ViewRect = viewRect;
-        
     }
 
 
