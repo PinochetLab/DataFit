@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,9 +6,6 @@ using Random = UnityEngine.Random;
 public class GraphBuilder : MonoBehaviour
 {
     private LineRenderer _lineRenderer;
-
-    //[SerializeField] private MeshFilter zoneMeshFilter;
-    //[SerializeField] private MeshFilter zoneLineMeshFilter;
     [SerializeField] private LineRenderer targetLineRenderer;
 
     private Expression _expression;
@@ -17,12 +13,13 @@ public class GraphBuilder : MonoBehaviour
 
     [SerializeField] private GameObject axisLinePrefab;
     [SerializeField] private GameObject axisNumberPrefab;
-    //[SerializeField] private float validRange = 0.02f;
-    //[SerializeField] private float rangeWidth = 0.005f;
+    [SerializeField] private Transform placeForSpawn;
+    [SerializeField] private Transform canvasForSpawn;
+    [SerializeField] private AudioSource labNoise;
 
     private const int cellCount = 10;
 
-    private static float percent = 0;
+    private static float percent;
 
     private List<Vector3> _targetPoints;
     private List<Vector3> _currentPoints;
@@ -41,7 +38,10 @@ public class GraphBuilder : MonoBehaviour
 
     private void Update()
     {
-        var noise = 0.02f * (1 - percent / 105);
+        if (GameManager.IsMenu) return;
+        var p = (1 - percent / 120);
+        var noise = 0.06f * p;
+        labNoise.volume = 0.35f * p;
         _lineRenderer.SetPositions(_currentPoints
             .Select(v => v + Vector3.up * (Random.Range(-noise, noise))).ToArray());
     }
@@ -93,6 +93,13 @@ public class GraphBuilder : MonoBehaviour
         return Mathf.Pow(2, Mathf.Round(Mathf.Log(x * 512, 2))) / 512;
     }
 
+    private GameObject MyInst(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        var go = Instantiate(prefab, position, rotation);
+        go.transform.parent = placeForSpawn;
+        return go;
+    }
+
     private void Build(Dictionary<string, float> values)
     {
         var xMin = _viewRect.xMin;
@@ -117,21 +124,23 @@ public class GraphBuilder : MonoBehaviour
 
         if (center.x is > -1 and < 1)
         {
-            var axis = Instantiate(axisLinePrefab, new Vector3(center.x, 0), rot90)
-                .GetComponent<LineRenderer>();
+            var axis = MyInst(axisLinePrefab, new Vector3(center.x, 0), rot90).GetComponent<LineRenderer>();
             axis.widthMultiplier *= axisWidth;
         }
         
         if (center.y is > -1 and < 1)
         {
-            var axis = Instantiate(axisLinePrefab, new Vector3(0, center.y), Quaternion.identity)
+            var axis = MyInst(axisLinePrefab, new Vector3(0, center.y), Quaternion.identity)
                 .GetComponent<LineRenderer>();
             axis.widthMultiplier *= axisWidth;
         }
 
         if (center.x is > -1 and < 1 && center.y is > -1 and < 1)
         {
-            Instantiate(axisNumberPrefab, center, Quaternion.identity).GetComponent<AxisNumber>().SetNumber(0);
+            var axisNumber = MyInst(axisNumberPrefab, center, Quaternion.identity).GetComponent<AxisNumber>();
+            axisNumber.transform.parent = canvasForSpawn;
+            axisNumber.transform.localScale = Vector3.one;
+            axisNumber.SetNumber(0);
         }
         
         var dx = 2f / cellCount;
@@ -142,44 +151,52 @@ public class GraphBuilder : MonoBehaviour
         
         for (var xCor = center.x + dx; xCor <= 1; xCor += dx)
         {
-            Instantiate(axisLinePrefab, new Vector3(xCor, 0), rot90);
+            MyInst(axisLinePrefab, new Vector3(xCor, 0), rot90);
             if (center.y is > -1 and < 1)
             {
-                var axisNumber = Instantiate(axisNumberPrefab, 
+                var axisNumber = MyInst(axisNumberPrefab, 
                     new Vector3(xCor, center.y), Quaternion.identity).GetComponent<AxisNumber>();
+                axisNumber.transform.parent = canvasForSpawn;
+                axisNumber.transform.localScale = Vector3.one;
                 axisNumber.SetNumber((xCor - center.x) * (yMax - yMin) / 2);
             }
         }
         
         for (var xCor = center.x - dx; xCor >= -1; xCor -= dx)
         {
-            Instantiate(axisLinePrefab, new Vector3(xCor, 0), rot90);
+            MyInst(axisLinePrefab, new Vector3(xCor, 0), rot90);
             if (center.y is > -1 and < 1)
             {
-                var axisNumber = Instantiate(axisNumberPrefab, 
+                var axisNumber = MyInst(axisNumberPrefab, 
                     new Vector3(xCor, center.y), Quaternion.identity).GetComponent<AxisNumber>();
+                axisNumber.transform.parent = canvasForSpawn;
+                axisNumber.transform.localScale = Vector3.one;
                 axisNumber.SetNumber((xCor - center.x) * (yMax - yMin) / 2);
             }
         }
         
         for (var yCor = center.y + dy; yCor <= 1; yCor += dy)
         {
-            Instantiate(axisLinePrefab, new Vector3(0, yCor), Quaternion.identity);
+            MyInst(axisLinePrefab, new Vector3(0, yCor), Quaternion.identity);
             if (center.x is > -1 and < 1)
             {
-                var axisNumber = Instantiate(axisNumberPrefab, 
+                var axisNumber = MyInst(axisNumberPrefab, 
                     new Vector3(center.x, yCor), Quaternion.identity).GetComponent<AxisNumber>();
+                axisNumber.transform.parent = canvasForSpawn;
+                axisNumber.transform.localScale = Vector3.one;
                 axisNumber.SetNumber((yCor - center.y) * (yMax - yMin) / 2);
             }
         }
         
         for (var yCor = center.y - dy; yCor >= -1; yCor -= dy)
         {
-            Instantiate(axisLinePrefab, new Vector3(0, yCor), Quaternion.identity);
+            MyInst(axisLinePrefab, new Vector3(0, yCor), Quaternion.identity);
             if (center.x is > -1 and < 1)
             {
-                var axisNumber = Instantiate(axisNumberPrefab, 
+                var axisNumber = MyInst(axisNumberPrefab, 
                     new Vector3(center.x, yCor), Quaternion.identity).GetComponent<AxisNumber>();
+                axisNumber.transform.parent = canvasForSpawn;
+                axisNumber.transform.localScale = Vector3.one;
                 axisNumber.SetNumber((yCor - center.y) * (yMax - yMin) / 2);
             }
         }
@@ -189,69 +206,5 @@ public class GraphBuilder : MonoBehaviour
 
         targetLineRenderer.positionCount = points.Count;
         targetLineRenderer.SetPositions(points.ToArray());
-
-        //zoneMeshFilter.mesh = CreateMesh(points, validRange);
-        //zoneLineMeshFilter.mesh = CreateMesh(points, validRange + rangeWidth);
     }
-
-    /*private static Mesh CreateMesh(List<Vector3> points, float radius)
-    {
-        var mesh = new Mesh();
-
-        var vertices = new List<Vector3>();
-        var normals = new List<Vector3>();
-        var uv = new List<Vector2>();
-        var triangles = new List<int>();
-        
-        for (var i = 0; i < points.Count - 1; i++)
-        {
-            var v = points[i];
-            if (i == 0) v += (v - points[1]).normalized;
-            var v1 = points[i + 1] - v;
-            if (i == points.Count - 2)
-            {
-                v1 += (points[^1] - v).normalized;
-            }
-            var v2 = new Vector2(-v1.y, +v1.x).normalized * radius;
-            var p1 = v - (Vector3)v2 / 2;
-            var p2 = v + (Vector3)v2 / 2;
-            var p3 = v + (Vector3)v2 / 2 + v1;
-            var p4 = v - (Vector3)v2 / 2 + v1;
-
-            var n = vertices.Count;
-            
-            vertices.AddRange(new List<Vector3> {p1, p2, p3, p4});
-            normals.AddRange(Enumerable.Repeat(-Vector3.forward, 4));
-            uv.AddRange(new List<Vector2>{p1, p2, p3, p4});
-            triangles.AddRange(new List<int>{n + 0, n + 1, n + 2, n + 0, n + 2, n + 3});
-        }
-
-        const int s = 16;
-        foreach (var p in points)
-        {
-            for (var i = 0; i < s; i++)
-            {
-                var a1 = 360f * i / s;
-                var a2 = 360f * (i + 1) / s;
-                
-                
-                var v1 = Quaternion.Euler(Vector3.forward * a1) * (Vector3.right * radius / 2);
-                var v2 = Quaternion.Euler(Vector3.forward * a2) * (Vector3.right * radius / 2);
-                
-                var n = vertices.Count;
-                
-                vertices.AddRange(new List<Vector3>{p, p + v1, p + v2});
-                normals.AddRange(Enumerable.Repeat(-Vector3.forward, 3));
-                uv.AddRange(new List<Vector2> {p, p + v1, p + v2});
-                triangles.AddRange(new List<int>{n + 0, n + 1, n + 2});
-            }
-        }
-
-        mesh.vertices = vertices.ToArray();
-        mesh.normals = normals.ToArray();
-        mesh.uv = uv.ToArray();
-        mesh.triangles = triangles.ToArray();
-
-        return mesh;
-    }*/
 }

@@ -22,9 +22,30 @@ public class ParameterBlockBox : MonoBehaviour
         return Instantiate(_instance.parameterBlockPrefab, _instance.transform).GetComponent<ParameterBlock>();
     }
 
+    public static void Clear()
+    {
+        while (_instance.transform.childCount > 0) {
+            DestroyImmediate(_instance.transform.GetChild(0).gameObject);
+        }
+    }
+
     public static void CreateEmpty()
     {
         Instantiate(_instance.emptyBlockPrefab, _instance.transform);
+    }
+
+    public static void Shake()
+    {
+        foreach (var t in _instance.transform.Cast<Transform>())
+        {
+            var block = t.GetComponent<ParameterBlock>();
+            if (block.IsEnabled)
+            {
+                GlobalSoundPlayer.Play("RemoveSocket");
+                block.Shake();
+                return;
+            }
+        }
     }
 
     public static void Shuffle()

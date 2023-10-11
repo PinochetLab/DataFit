@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,13 +23,36 @@ public class LevelLauncher : MonoBehaviour
 
     private static int percent = 0;
 
-    private void Start()
+    private static int currentLevelIndex;
+
+    [SerializeField] private List<Transform> spawnParents;
+
+    private static LevelLauncher inst;
+
+    private void Awake()
     {
-        LaunchLevel(Level.Levels[0]);
+        inst = this;
+    }
+
+    private void ClearParents()
+    {
+        foreach (var spawnParent in spawnParents)
+        {
+            while (spawnParent.childCount > 0) {
+                DestroyImmediate(spawnParent.GetChild(0).gameObject);
+            }
+        }
+    }
+
+    public static void LaunchLevel(int levelIndex)
+    {
+        currentLevelIndex = levelIndex;
+        inst.LaunchLevel(Level.Levels[levelIndex]);
     }
 
     private void LaunchLevel(Level level)
     {
+        ClearParents();
         texDraw.text = level.Expression.ToTex();
         var initialParameters = level.ParameterValues.ToDictionary(
             p => p.Key,
@@ -105,18 +129,28 @@ public class LevelLauncher : MonoBehaviour
 
     public void TryPassLevel()
     {
+        if (GameManager.IsMenu)
+        {
+            return;
+        }
+        GlobalSoundPlayer.Play("SendButtonClick");
         StopCoroutine(WrongAnswer());
         StartCoroutine(percent == 100 ? RightAnswer() : WrongAnswer());
     }
 
     private IEnumerator RightAnswer()
     {
+        GlobalSoundPlayer.Play("Success");
+        ProgressStorage.PassLevel(currentLevelIndex);
         diodImage.sprite = greenDiodSprite;
         yield return new WaitForSeconds(2f);
+        diodImage.sprite = blackDiodSprite;
+        GameManager.Switch();
     }
 
     private IEnumerator WrongAnswer()
     {
+        GlobalSoundPlayer.Play("Failure");
         const float dt = 0.1f;
         diodImage.sprite = redDiodSprite;
         yield return new WaitForSeconds(dt);

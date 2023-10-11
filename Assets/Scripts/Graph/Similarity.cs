@@ -16,7 +16,7 @@ public class Similarity
         get
         {
             if (MSE < WinMSE) return 100;
-            return (int)(100 * Mathf.Exp(-Mathf.Pow((MSE - WinMSE) * 25, 2)));
+            return (int)(100 * Mathf.Exp(-Mathf.Pow((MSE - WinMSE) * 25, 0.5f)));
         }
     }
 }
